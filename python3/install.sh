@@ -3,6 +3,10 @@
 #SETUP:
 source config.sh
 
+printf "${COLOR_RED}OpenCV3 + python3 installer${COLOR_NO}\n"
+read -n 1 -s -r -p "Press any key to continue"
+echo ""
+
 # Get current working dir:
 SCRIPT_DIR='$(pwd)'
 
@@ -60,11 +64,27 @@ brew install cmake pkg-config
 brew install jpeg libpng libtiff openexr
 brew install eigen tbb
 
-# Download OpenCV tagged release 3.2.0 and OpenCV Contrib:
-mkdir ~/$OPENCV_INSTALL_DIR
-cd ~/$OPENCV_INSTALL_DIR
-git clone https://github.com/opencv/opencv.git --branch ${OPENCV_VERSION} --single-branch
-git clone https://github.com/opencv/opencv_contrib --branch ${OPENCV_VERSION} --single-branch
+# If found install dir
+cd ~
+if [ -d "$OPENCV_INSTALL_DIR" ]; then
+  # Update local storage:
+  echo "Install dir found, resetting to needed version"
+  cd ~/$OPENCV_INSTALL_DIR/opencv
+  git fetch origin $OPENCV_VERSION
+  git reset --hard $OPENCV_VERSION
+
+  cd ~/$OPENCV_INSTALL_DIR/opencv_contrib
+  git fetch origin $OPENCV_VERSION
+  git reset --hard $OPENCV_VERSION
+  git checkout $OPENCV_VERSION
+else
+  # Download OpenCV tagged release 3.2.0 and OpenCV Contrib:
+  echo "Install dir not found, cloning from GitHub..."
+  mkdir ~/$OPENCV_INSTALL_DIR
+  cd ~/$OPENCV_INSTALL_DIR
+  git clone https://github.com/opencv/opencv.git --branch ${OPENCV_VERSION} --single-branch
+  git clone https://github.com/opencv/opencv_contrib --branch ${OPENCV_VERSION} --single-branch
+fi
 
 PYTHON3_LIBRARY="$(ls /usr/local/Cellar/python3/3.*/Frameworks/Python.framework/Versions/3.*/lib/python3.*/config-3.*/libpython3.*.dylib | sed -n 1p)"
 PYTHON3_INCLUDE_DIR="$(ls -d /usr/local/Cellar/python3/3.*/Frameworks/Python.framework/Versions/3.*/include/python3.*/ | sed -n 1p)"

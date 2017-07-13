@@ -2,13 +2,26 @@
 #SETUP:
 source config.sh
 
-# Remove folders:
-rm -rf ~/$OPENCV_INSTALL_DIR
+# Remove renamed OpenCV and cv virtualenv:
+rm -rf /usr/local/lib/python3.*/site-packages/cv2.so
+rm -rf ~/.virtualenvs/cv
 
 # Remove OpenCV:
-mkdir ~/$OPENCV_INSTALL_DIR
-cd ~/$OPENCV_INSTALL_DIR
-git clone https://github.com/opencv/opencv.git --branch ${OPENCV_VERSION} --single-branch
+# If found install dir
+cd ~
+if [ -d "$OPENCV_INSTALL_DIR" ]; then
+  # Update local storage:
+  echo "Install dir found, resetting to needed version"
+  cd ~/$OPENCV_INSTALL_DIR/opencv
+  git fetch origin $OPENCV_VERSION
+  git reset --hard $OPENCV_VERSION
+else
+  # Download OpenCV tagged release 3.2.0 and OpenCV Contrib:
+  echo "Install dir not found, cloning from GitHub..."
+  mkdir ~/$OPENCV_INSTALL_DIR
+  cd ~/$OPENCV_INSTALL_DIR
+  git clone https://github.com/opencv/opencv.git --branch ${OPENCV_VERSION} --single-branch
+fi
 
 PYTHON3_LIBRARY="$(ls /usr/local/Cellar/python3/3.*/Frameworks/Python.framework/Versions/3.*/lib/python3.*/config-3.*/libpython3.*.dylib | sed -n 1p)"
 PYTHON3_INCLUDE_DIR="$(ls -d /usr/local/Cellar/python3/3.*/Frameworks/Python.framework/Versions/3.*/include/python3.*/ | sed -n 1p)"
@@ -31,6 +44,9 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE \
 
 make -j4
 sudo make uninstall
+
+# Remove install dir:
+rm -rf ~/$OPENCV_INSTALL_DIR
 
 # Remove Homebrew
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"
