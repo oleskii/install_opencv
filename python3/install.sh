@@ -8,7 +8,8 @@ read -n 1 -s -r -p "Press any key to continue"
 echo ""
 
 # Get current working dir:
-SCRIPT_DIR='$(pwd)'
+SCRIPT_DIR="$(pwd)"
+
 
 # Accept the Apple Developer license
 sudo xcodebuild -license
@@ -116,13 +117,12 @@ mv cv2.*m-darwin.so cv2.so
 cd ~/.virtualenvs/cv/lib/python3.*/site-packages/
 ln -s /usr/local/lib/python3.*/site-packages/cv2.so cv2.so
 
-cd $SCRIPT_DIR
-python test_install.py
-
 echo ""
 echo ""
 echo "Don't forget to remove temporary files after install at:"
 echo "      ~/$OPENCV_INSTALL_DIR"
 echo ""
 echo "Done!"
-cd $SCRIPT_DIR
+cd ${SCRIPT_DIR}
+echo ""
+python test_install.py
