@@ -1,0 +1,2 @@
+OPENCV_INSTALL_DIR="opencv_install"
+OPENCV_VERSION="3.2.0"
