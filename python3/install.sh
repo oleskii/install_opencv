@@ -97,7 +97,7 @@ cd ~/.virtualenvs/cv/lib/python3.*/site-packages/
 ln -s /usr/local/lib/python3.*/site-packages/cv2.so cv2.so
 
 cd $SCRIPT_DIR
-python py_install_test.py
+python test_install.py
 
 echo ""
 echo ""
